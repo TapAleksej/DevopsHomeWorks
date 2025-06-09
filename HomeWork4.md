@@ -10,13 +10,15 @@ alrex@devpc:~/DevopsHomeWorks$ touch HomeWork4.md
 
 git branch -M main
 
-git remote add origin https://github.com/TapAleksej/DevopsHomeWorks.git
+git remote add origin git remote add origin git@github.com:TapAleksej/DevopsHomeWorks.git
 
 Сгенерировал и добавил открытый ключ
 
 ssh-keygen -b 4096
 
-"fromubuntu"на github
+Назвал SSH KEY "fromubuntu"на github
+
+##Подключение с win pk
 
 
 
