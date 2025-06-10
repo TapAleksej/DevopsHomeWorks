@@ -2,6 +2,44 @@
     Установил отдельный HDD c ubuntu (UPK)  на физический ПК
     Изучать буду через MobaXterm на пк с win10  (WPK).
 
+### Установить SSH на UPK
+Обновить пакет
+
+    ```bash
+    alrex@devpc:~$ sudo apt update
+    [sudo] password for alrex:
+    Hit:1 http://ru.archive.ubuntu.com/ubuntu noble InRelease
+    Get:2 http://ru.archive.ubuntu.com/ubuntu noble-updates InRelease [126 kB]
+    Get:3 http://ru.archive.ubuntu.com/ubuntu noble-backports InRelease [126 kB]
+    - - - -
+
+    # установить SSH
+    sudo apt-get install ssh
+    ----
+    # Проверка статуса - запущен ли SSH
+        alrex@devpc:~$ systemctl status sshd
+    ● ssh.service - OpenBSD Secure Shell server
+        Loaded: loaded (/usr/lib/systemd/system/ssh.service; enabled; preset: enabled)
+        Active: active (running) since Tue 2025-06-10 09:00:05 MSK; 5h 20min ago
+    TriggeredBy: ● ssh.socket
+
+    ```
+    Меняю порт 22 по которому по умолчанию происходит соединение
+
+    ```bash
+
+        alrex@devpc:~$ sudo nano /etc/ssh/sshd_config
+
+    ```
+        Расскоментим и поставил порт Port  1234
+
+    Рестартуем SSH
+
+    ```bash
+        systemctl restart sshd
+    ```
+
+
 ### Создать репозитарий для домашки
     Создал на гитхабе репозитарий домашних работ.
     На ubuntu в разделе создал папку для репозитария
@@ -36,18 +74,8 @@
     ```
 
 
-    - Меняю порт 22 по которому по умолчанию происходит соединение
 
-    ```bash
-
-        alrex@devpc:~$ sudo nano /etc/ssh/sshd_config
-
-    ```
-        Расскоментим и поставил порт Port  1234
-
-
-
-### Подключение с WPK
+## Подключение с WPK
 
     - Проверим можем ли достучаться до UPK c WPK
 
@@ -92,9 +120,9 @@
 
         ```bash
         alrex@devpc:~$ cat .ssh/authorized_keys
-        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpiHQzsCgo7KsB+779OPvYnaKy1DUdoivxzRvqs8CajwhIeEf1D/yz8GDj2Kg7xEHeRevDw3xp+D2qOoPH+6mp264jUUYwgBOMqVGm9IGE762Mce5hjCrBcl5ifuhP3Gzh+ScNNvzQnLFGxRBwI+gPQL4rIYN4stbww6P8Z63i2NOHmmondap0YCk2vAv8fekEA4xuwyBfYR/IgGGzePY5xC1TbxG2oHwjee7ajN4liDQn2UVc/V38jDLfisZIJt70dwyuWZiNv1LGGHbkvlgxGWFiWxDmZaOGVtiartUfkie6U9G4IR9uIq9HWeq5IJEbeoEcLIsVrf8RqXlQRIcgr9EwAv85qNL7VmRIoA9S35zmZfSaNwo81HlkWY4uk0rrRdxY3iS2wNwSeSHL1K5YaWyLqb5Pve0R6/sNtEmLOD8ss1PkY9hvnCvSQWUzLnLos0btsOS4RAOsoxf0SZE4CMgQZO9nYwuHPoNA+MVBW3eI4K0U7in8SOGAAVBM/BpgG/FXgVgdC8FeohN8Cf59hFbIAC8PMTMs7Muc1ZIonFevNNgo7eLsfE0WV6kXJEBHnlZxGFwfqFw5hK4b5SS7bviXCjRhXvcEZ1N97QtOOPQwpQO2x4pdbBrMAM8z/A2pj0IgSF/PtO1VkfKMr4kCnENmZmlNagWEntPC7C47Aw== tapaleksej@yandex.ru
+        ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQCpiHQzsCgo7KsB+779OPvYnaKy1DUdoivxzRvqs8CajwhIeEf1D/yz8GDj2Kg7xEHeRevDw3xp+D2qOoPH+6mp264jUUYwgBOMqVGm9IGE762Mce5hjCrBcl5ifuhP3Gzh+ScNNvzQnLFGxRBwI+gPQL4rIYN4stbww6P8Z63i2NOHmmondap0YCk2vAv8fekEA4xuwyBfYR/IgGGzePY5xC1TbxG2oHwjee7ajN4liDQn2UVc/V38jDLfisZIJt70dwyuWZiNv1LGGHbkvlgxGWFiWxDmZaOGVtiartapaleksej@yandex.ru
         ```
-    - Стучусь - меня поздравляют
+    - Стучусь - *меня поздравляют*
 
         ```bash
         user@VLG-5CD5491NCN MINGW64 /c/MobaXterm_Portable_v25.2
@@ -113,11 +141,3 @@ alrex@devpc:~$ exit
 logout
 Connection to 192.168.50.103 closed.
 ```
-
-
-
-
-
-
-
-
