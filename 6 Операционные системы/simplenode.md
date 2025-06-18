@@ -15,6 +15,7 @@ http.createServer((req, res) => {
 if (req.url === '/kill') {
 // App die on uncaught error and print stack trace to stderr
 throw new Error('Someone kills me');
+//res.writeHead('Someone kills me', { 'Content-Type': 'text/plain' });
 }
 if (req.method === 'POST') {
 // App print this message to stderr, but is still alive
@@ -60,19 +61,29 @@ sudo vim /etc/systemd/system/myapp.service
 #### Содержимое `myapp.service`
 
 ```bash
-[Install]
-WantedBy=multi-user.target
+[Unit]
+Describe=test post get kill methods on 3000 port
+After=network.target
 
 [Service]
+#timer_, fork, oneshot
+Type=simple
 Environment=MYAPP_PORT=3000
 User=www-data
 Group=www-data
 ExecStart=/usr/bin/node /usr/local/www/myapp/index.js
+# Действия при останове и перегрузке
+# ExecReload
+# ExecStop
+TimeOutStart=0
 Restart=always
 # Отправка логов syslog
 StandardOutput=syslog
 StandardError=syslog
 SyslogIdentifier=myapp
+
+[Install]
+WantedBy=multi-user.target
 ```
 где `/usr/bin/node` - где установлен nodejs, получил командой `which node`
 
