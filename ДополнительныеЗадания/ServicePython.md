@@ -42,7 +42,7 @@ Python 3.12.3
 `sudo -u www-data /opt/web_monitoring/.venv/bin/pip install -U -r requirements.txt`
 
 ## Установка прав
-После установки пакетов начинаю долго "плавать" с правами
+
 `sudo chown www-data:www-data /opt/web_monitoring/`
 Добавил на права запись
 `sudo chmod g+w www-data:www-data /opt/web_monitoring/*`
