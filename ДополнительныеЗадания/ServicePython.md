@@ -55,7 +55,7 @@ Python 3.12.3
 ls -ld /opt/web_monitoring
 sudo chgrp alrex /opt/web_monitoring
 ```
-Только добавления в группу моей учетки alrex получилось запустить.
+
 
 ## Запуск log-server
 ```bash
