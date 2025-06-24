@@ -258,3 +258,6 @@ sudo systemctl enable dashboard.service
 В браузере запускаю  http://127.0.0.1:5000 или http://192.168.50.34:5000
 
 получаю доску
+
+![image](https://github.com/user-attachments/assets/cf3559b5-7b42-4302-98cd-760a0ad4a2a2)
+
