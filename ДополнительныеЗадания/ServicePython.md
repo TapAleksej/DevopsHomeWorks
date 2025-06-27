@@ -41,8 +41,8 @@ Python 3.12.3
 В него загружаю пакеты из requirements.txt
 `sudo -u www-data /opt/web_monitoring/.venv/bin/pip install -U -r requirements.txt`
 
-#### проблемное место
-После установки пакетов начинаю долго "плавать" с правами
+## Установка прав
+
 `sudo chown www-data:www-data /opt/web_monitoring/`
 Добавил на права запись
 `sudo chmod g+w www-data:www-data /opt/web_monitoring/*`
@@ -55,7 +55,7 @@ Python 3.12.3
 ls -ld /opt/web_monitoring
 sudo chgrp alrex /opt/web_monitoring
 ```
-Только добавления в группу моей учетки alrex получилось запустить.
+
 
 ## Запуск log-server
 ```bash
@@ -124,7 +124,7 @@ Press CTRL+C to quit
 Создание API-сервера (log-server.py)
 `sudo vim /etc/systemd/system/apilog.service`
 
-Запустилось только под alrex
+
 
 ```bash
 [Unit]
@@ -133,8 +133,8 @@ After=network.target
 
 [Service]
 Type=simple
-User=alrex
-Group=alrex
+User=www-data
+Group=www-data
 WorkingDirectory=/opt/web_monitoring
 ExecStart=/opt/web_monitoring/.venv/bin/python3.12 /opt/web_monitoring/log-server.py
 Restart=always
@@ -163,4 +163,101 @@ sudo systemctl enable apilog
 $ tail -f info_app.log
 2025-06-22 14:14:07 - INFO - GET / from 127.0.0.1 - Status: 200 - 0.0046s
 2025-06-22 14:14:23 - INFO - GET / from 127.0.0.1 - Status: 200 - 0.0008s
-``
+```
+## Моделируем запросы пользователей
+С помощью расписания каждые 5 минут отправляем запросы
+
+```bash
+sudo vi /etc/crontab
+```
+
+```bash
+5 *   * * * root /opt/web_monitoring/.venv/bin/python3.12 /opt/web_monitoring/load-generator.py http://localhost:9100 -r 1000 -c 50 >> /var/log/load-generator.log 2>&1
+```
+Для просмотра лога CRON
+```bash
+touch /var/log/load-generator.log
+# меняем владельца - нужно ли?
+sudo chown www-data:www-data /var/log/load-generator.log
+```
+
+Скрипт вручную создал файл `results.csv`  - меняем владельца
+```bash
+sudo chown www-data:www-data results.csv
+chmod www-data:www-data 750 results.csv
+```
+Проверяем - работает по расписанию
+```bash
+sudo tail -f /var/log/load-generator.log
+
+
+📊 Load testing results:
+✅ Successful requests: 1000 (100.0%)
+❌ Failure requests: 0 (0.0%)
+⏱️ Total time: 147.57 s
+⚡ Requests per second: 6.78
+⏳ Average response time: 0.1476 s
+
+🕒 Total test execution time: 3.16 s
+```
+## Запуск сервиса для dashboard
+
+```
+sudo vim /etc/systemd/system/dashboard.service
+
+[Unit]
+Description=Dashboard server
+After=network.target
+
+[Service]
+Type=oneshot
+User=www-data
+Group=www-data
+WorkingDirectory=/opt/web_monitoring
+ExecStart=/opt/web_monitoring/.venv/bin/python3.12 /opt/web_monitoring/dashboard.py
+Restart=always
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=dashboard
+Environment=MYAPP_PORT=5000
+```
+Далее стандартно
+```
+sudo systemctl daemon-reload
+sudo systemctl restart rsyslog
+
+sudo systemctl start dashboard.service
+sudo systemctl status dashboard.service
+
+alrex@ubuntu1:~$ sudo systemctl status dashboard.service
+● dashboard.service - Dashboard server
+     Loaded: loaded (/etc/systemd/system/dashboard.service; disabled; preset: enabled)
+     Active: active (running) since Tue 2025-06-24 10:43:50 UTC; 5s ago
+   Main PID: 13489 (python3.12)
+      Tasks: 4 (limit: 3735)
+     Memory: 111.1M (peak: 111.1M)
+        CPU: 5.542s
+     CGroup: /system.slice/dashboard.service
+             ├─13489 /opt/web_monitoring/.venv/bin/python3.12 /opt/web_monitoring/dashboard.py
+             └─13491 /opt/web_monitoring/.venv/bin/python3.12 /opt/web_monitoring/dashboard.py
+
+Jun 24 10:43:50 ubuntu1 systemd[1]: Started dashboard.service - Dashboard server.
+Jun 24 10:43:53 ubuntu1 dashboard[13489]:  * Serving Flask app 'dashboard'
+Jun 24 10:43:53 ubuntu1 dashboard[13489]:  * Debug mode: on
+Jun 24 10:43:53 ubuntu1 dashboard[13489]: WARNING: This is a development server. Do not use it in a >
+Jun 24 10:43:53 ubuntu1 dashboard[13489]:  * Running on all addresses (0.0.0.0)
+Jun 24 10:43:53 ubuntu1 dashboard[13489]:  * Running on http://127.0.0.1:5000
+Jun 24 10:43:53 ubuntu1 dashboard[13489]:  * Running on http://192.168.50.34:5000
+Jun 24 10:43:53 ubuntu1 dashboard[13489]: Press CTRL+C to quit
+Jun 24 10:43:53 ubuntu1 dashboard[13489]:  * Restarting with stat
+
+```
+```
+sudo systemctl enable dashboard.service
+```
+В браузере запускаю  http://127.0.0.1:5000 или http://192.168.50.34:5000
+
+получаю доску
+
+![image](https://github.com/user-attachments/assets/cf3559b5-7b42-4302-98cd-760a0ad4a2a2)
+
