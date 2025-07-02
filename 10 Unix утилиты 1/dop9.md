@@ -253,6 +253,7 @@ stress-ng --vm 2 --vm-bytes 2G --timeout 300 & stress-ng --vm 1 --vm-bytes 1G --
 Понаблюдать за тем что показывают утилиты
 dstat -cglmns --top-cpu --top-mem --top-io
 mpstat -P ALL
+Не показал изменеий
 
 
 Запустить dd if=/dev/zero of=/tmp/testfile bs=1M count=500 
