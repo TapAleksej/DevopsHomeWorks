@@ -266,6 +266,7 @@ stress-ng --vm 1 --vm-bytes 1G --timeout 300 -s 1
 
 
 mpstat -P ALL
+Не показал изменеий
 
 
 Запустить dd if=/dev/zero of=/tmp/testfile bs=1M count=500 
