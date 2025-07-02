@@ -295,7 +295,7 @@ mpstat -P ALL 2
 
 
 
-### не работает wmstat
+* не работает wmstat *
 ```
 sudo apt update 
 sudo apt install procps
@@ -319,7 +319,35 @@ iostat 2
 avg-cpu:  %user   %nice %system %iowait  %steal   %idle
            1.91    0.00   97.25    0.85    0.00    0.00
 
+iostat -hdx 2
+
+ w/s     wkB/s   wrqm/s  %wrqm w_await wareq-sz Device
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop0
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop1
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop10
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop11
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop12
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop13
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop14
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop2
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop3
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop4
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop5
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop6
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop7
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop8
+    0.00      0.0k     0.00   0.0%    0.00     0.0k loop9
+    7.50     60.0k     7.50  50.0%    1.00     8.0k sda
+
 ```
+Видно , что нагрузка идёт на диск sda
+
+`iostat -hdx 2`
+`-h` human
+'-d'  Display the device utilization report.
+`-x`  Display extended statistics.
+
+
 
 
 сгенерировать нагрузку с помощью stress-ng и dd 
@@ -352,13 +380,45 @@ avg-cpu:  %user   %nice %system %iowait  %steal   %idle
 'atop' так же позволяет увидеть нагрузку текущую. Удобно видно pid процессов. Который можно снять.
 ![image](https://github.com/user-attachments/assets/e3528b6c-5ffe-46ee-9f99-0d2b7f021d08)
 
-Запустить openssl speed -seconds 30 2>& 1 > /dev/null & и с помощью pidstat найти
-PID процесса openssl
+```
+kill 9830 9832
+```
+
+
+Запустить 'openssl speed -seconds 30 2>& 1 > /dev/null &' и с помощью `pidstat` найти
+PID процесса openssl'
+```
+ps aux | grep openssl
+# alrex      10414 99.9  0.1   9788  6440 pts/0    R    13:17   2:56 openssl speed -seconds 30
+
+pidstat | grep openssl
+# 01:22:22 PM  1000     10414    1.12    0.00    0.00    0.00    1.12     0  openssl
+
+```
 % пользовательского (usr) и системного (sys) CPU time
+```
+mpstat -P ALL
+
+01:27:06 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+01:27:06 PM  all    5.27    0.05    3.82    0.61    0.00    0.16    0.00    0.00    0.00   90.09
+01:27:06 PM    0    6.34    0.09    3.71    0.66    0.00    0.03    0.00    0.00    0.00   89.16
+01:27:06 PM    1    4.14    0.02    3.92    0.56    0.00    0.29    0.00    0.00    0.00   91.08
+
+
+mpstat 
+
+01:28:51 PM  CPU    %usr   %nice    %sys %iowait    %irq   %soft  %steal  %guest  %gnice   %idle
+01:28:51 PM  all    5.47    0.05    3.80    0.61    0.00    0.16    0.00    0.00    0.00   89.91
+
+
+```
+
+
 Запустить sleep 5; ls -R /usr и после ее завершения найти
 время выполнения (real, user, sys)
 максимальное потребление памяти
-Запустить стресс-тест с помощью утилиты stress-ng (параметры подобрать самостоятельно) и вывести с помощью ps топ-5 процессов (по очереди) с наибольшим потреблением
+Запустить стресс-тест с помощью утилиты stress-ng 
+(параметры подобрать самостоятельно) и вывести с помощью ps топ-5 процессов (по очереди) с наибольшим потреблением
 CPU
 DISK
 MEM
