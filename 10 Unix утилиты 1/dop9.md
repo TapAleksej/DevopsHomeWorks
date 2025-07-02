@@ -247,24 +247,11 @@ sudo apt install dstat
 ```
 Запустить стресс-тест с помощью утилиты stress-ng:
 stress-ng --cpu 4 --timeout 600
-stress-ng --vm 2 --vm-bytes 2G --timeout 300 &
-stress-ng --vm 1 --vm-bytes 1G --timeout 300 -s 1
+stress-ng --vm 2 --vm-bytes 2G --timeout 300 & stress-ng --vm 1 --vm-bytes 1G --timeout 300 -s 1
 
 
 Понаблюдать за тем что показывают утилиты
 dstat -cglmns --top-cpu --top-mem --top-io
-
-при запуске 
-```
-stress-ng --vm 2 --vm-bytes 2G --timeout 300 &
-stress-ng --vm 1 --vm-bytes 1G --timeout 300 -s 1
-```
-Показывает наиболее дорогие
-![image](https://github.com/user-attachments/assets/e8c4ae32-b18f-4eba-9d01-c645bcc7c448)
-При `stress-ng --cpu 4 --timeout 600`
-![image](https://github.com/user-attachments/assets/78ca49cf-b62a-40d9-a315-9952a2c3bb84)
-
-
 mpstat -P ALL
 
 
