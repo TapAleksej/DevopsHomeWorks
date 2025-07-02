@@ -350,9 +350,7 @@ avg-cpu:  %user   %nice %system %iowait  %steal   %idle
 
 ```
 'atop' так же позволяет увидеть нагрузку текущую. Удобно видно pid процессов. Который можно снять.
-
-
-
+![image](https://github.com/user-attachments/assets/e3528b6c-5ffe-46ee-9f99-0d2b7f021d08)
 
 Запустить openssl speed -seconds 30 2>& 1 > /dev/null & и с помощью pidstat найти
 PID процесса openssl
