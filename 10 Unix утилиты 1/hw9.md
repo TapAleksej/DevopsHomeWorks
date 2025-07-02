@@ -140,11 +140,20 @@ find: ‘/run/user/120/doc’: Permission denied
 ```
  sudo apt-get update
  sudo apt install nginx
+ 
+ # проверка конфига nginx
+ sudo nginx -t
+ 
+ #nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+ # nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+
  sudo systemctl start nginx
  sudo systemctl status nginx
+  ```
  
- htop
-
+ htop atop
+```
 ls -l /var/log/nginx/
 total 12
 -rw-r----- 1 www-data adm  0 Jun 23 10:31 access.log
