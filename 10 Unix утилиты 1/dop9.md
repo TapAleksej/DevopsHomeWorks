@@ -488,3 +488,4 @@ sudo iotop
 ```
 dstat -cglmns --top-cpu --top-mem --top-io
 ```
+![image](https://github.com/user-attachments/assets/a222567f-33ec-4096-943f-8b4d5c990d32)
