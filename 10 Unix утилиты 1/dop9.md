@@ -448,7 +448,39 @@ cat output.txt
 
 ```
 Запустить стресс-тест с помощью утилиты stress-ng 
-(параметры подобрать самостоятельно) и вывести с помощью ps топ-5 процессов (по очереди) с наибольшим потреблением
-CPU
-DISK
-MEM
+(параметры подобрать самостоятельно) и вывести с помощью ps топ-5 процессов (по очереди) с 
+наибольшим потреблением
+CPU MEM
+
+  `ps aux --sort=-%cpu | head -n 5`
+
+```
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+alrex      33986 37.9  4.4 1316096 146236 pts/0  R    13:21   0:02 stress-ng-vm [run]
+alrex      33985 32.2 32.3 1316096 1058000 pts/0 R+   13:21   0:02 stress-ng-vm [run]
+alrex      33988 28.0 11.6 1316096 380772 pts/0  R    13:21   0:00 stress-ng-vm [run]
+alrex      33981 15.8  0.2 267520  9796 pts/0    R+   13:21   0:01 stress-ng-switch [run]
+```
+
+`ps aux --sort=-%mem | head -n 5`
+```
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+alrex      33993 36.9 32.3 1316096 1057980 pts/0 R    13:22   0:07 stress-ng-vm [run]
+alrex      33995 25.2 28.9 1316096 944548 pts/0  R+   13:22   0:01 stress-ng-vm [run]
+alrex      33998 49.5  8.8 1316096 288220 pts/0  R    13:22   0:00 stress-ng-vm [run]
+gdm         2202  0.4  3.2 3767080 107524 tty1   Sl+  06:15   1:52 /usr/bin/gnome-shell
+
+```
+
+
+
+DISK  disk write = 82.94 M/s - на 1 месте
+```
+dd if=/dev/zero of=/tmp/testfile bs=1M count=5000
+
+
+sudo iotop
+
+  33795 be/4 alrex       0.00 B/s   82.94 M/s dd if=/dev/zero of=/tmp/testfile bs=1M count=5000
+```
+
