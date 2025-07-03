@@ -484,3 +484,7 @@ sudo iotop
   33795 be/4 alrex       0.00 B/s   82.94 M/s dd if=/dev/zero of=/tmp/testfile bs=1M count=5000
 ```
 
+# Но лучший вариант
+```
+dstat -cglmns --top-cpu --top-mem --top-io
+```
