@@ -1,0 +1,8 @@
+2025-02-01 10:00:00 - INFO - Application started successfully.
+2025-02-01 10:05:23 - WARNING - Low disk space on drive C:.
+2025-02-01 10:15:45 - ERROR - Failed to connect to the database 10.3.1.5:3306. Retrying...
+2025-02-01 10:20:10 - INFO - Successfully connected to the database 10.3.1.5:3306.
+2025-02-01 11:00:00 - INFO - User logged in: user@example.com.
+2025-02-01 11:05:30 - INFO - Data export completed successfully.
+2025-02-01 11:30:15 - WARNING - High memory usage detected.
+2025-02-01 12:00:00 - INFO - Application stopped.
