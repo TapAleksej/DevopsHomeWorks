@@ -1,0 +1,10 @@
+#!/bin/bash
+
+timestamp=$(date +"%Y%m%d%H%M%S")
+
+for file in *.log; do
+  if [ -e "$file" ]; then
+    base="${file%.log}"
+    mv "$file" "${base}_${timestamp}.log"
+  fi
+done
