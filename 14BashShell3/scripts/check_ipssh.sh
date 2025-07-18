@@ -9,3 +9,9 @@ for ip in "${ips[@]}"; do
   echo "IP: $ip"
 done
 
+
+echo "sed"
+set -x
+echo $(sed -n '2p' $filename)
+
+

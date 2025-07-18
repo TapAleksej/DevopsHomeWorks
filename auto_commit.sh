@@ -6,8 +6,15 @@ git add .
 
 last_hash=$(git log --oneline | head -1 | awk '{print $1}')
 
+echo "Примечание commit"
+read comit
 
-git commit -m "autocommit_${last_hash}"
+if [ ! "$comit" = "" ]; then
+	git commit -m "$comit"
+else	
+	git commit -m "autocommit_${last_hash}"
+fi
+
 
 echo "return code  $?"
 chk=$(git log --oneline | head -2)
