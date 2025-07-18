@@ -15,7 +15,7 @@ chk=$(git log --oneline | head -2)
 echo "$chk"
 
 git pull
-if [$? -eq 0];then
+if [ $? -eq 0] ;then
   git push
 fi
 #echo "autocommit_$last_hash"
