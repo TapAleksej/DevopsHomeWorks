@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-set -o pipefail
-set -x
+# set -o pipefail
+#set -x
 
 git add .		
 		
