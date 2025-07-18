@@ -11,7 +11,7 @@ done
 
 
 echo "sed"
-set -x
+#set -x
 echo $(sed -n '2p' $filename)
 
 
