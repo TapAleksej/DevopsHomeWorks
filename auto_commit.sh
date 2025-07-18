@@ -4,7 +4,7 @@
 
 git add .		
 		
-last_hash=$(git log --oneline | head -1 | awk '{print $2}')
+last_hash=$(git log --oneline | head -1 | awk '{print $1}')
 
 
 git commit -m "autocommit_${last_hash}" 
