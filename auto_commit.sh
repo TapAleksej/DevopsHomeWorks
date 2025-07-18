@@ -14,15 +14,25 @@ chk=$(git log --oneline | head -2)
 
 echo "$chk"
 
-echo "Сделать отправку на гитхаб ? y/n"
-
+echo "Сделать отправку на гитхаб? y/n"
 read answer
 
+answer=$(echo "$answer" | tr '[:upper:]' '[:lower:]')
 
-if [ ${answer} -eq 'y' ]; then
-	git pull 
+if [ "$answer" = "y" ] || [ "$answer" = "yes" ]; then
+  git pull
 
-	if [ $? -eq 0 ]; then
-	  git push
-	fi
+  if [ $? -eq 0 ]; then
+    git push
+  else
+    echo "Ошибка при git pull"
+    exit 1
+  fi
+elif [ "$answer" = "n" ] || [ "$answer" = "no" ]; then
+  echo "Операция отменена."
+  exit 0
+else
+  echo "Неверный ввод. Введите 'y' или 'n'."
+  exit 1
 fi
+
