@@ -1,0 +1,14 @@
+server {
+       listen 80;
+       listen [::]:80;
+
+       server_name 192.168.50.34;
+
+       root /var/www/tms;
+       index index.html;
+
+       location / {
+               try_files $uri $uri/ =404;
+       }
+}
+

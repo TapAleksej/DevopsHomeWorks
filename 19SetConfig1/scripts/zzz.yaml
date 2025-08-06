@@ -1,0 +1,35 @@
+---
+- hosts: targets
+  become: true
+  gather_facts: no
+  vars:
+    user: "appuser"
+
+  tasks:
+    - name: Add appuser
+      user:
+        name: "{{ user }}"
+        shell: /bin/bash
+        state: present
+
+    - name: Create .ssh directory if it does not exist
+      file:
+        path: "/home/{{ user }}/.ssh"
+        state: directory
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0700'
+
+    - name: Ensure authorized_keys file exists
+      file:
+        path: "/home/{{ user }}/.ssh/authorized_keys"
+        state: touch
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0600'
+
+    - name: Set authorized key from file
+      authorized_key:
+        user: "{{ user }}"
+        state: present
+        key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_ed25519.pub') }}"

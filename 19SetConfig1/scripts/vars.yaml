@@ -1,0 +1,2 @@
+dir_nginx: "/etc/nginx/"
+project_name:  "tms"

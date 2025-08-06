@@ -1,0 +1,2 @@
+[targets]
+MySlaveServer ansible_host=192.168.50.34

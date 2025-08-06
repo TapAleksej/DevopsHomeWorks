@@ -1,0 +1,26 @@
+---
+- hosts: targets
+  become: true
+  gather_facts: no
+  vars_files: ./vars.yaml
+  tasks:    
+    - name:  Remove default site nginx
+      file:
+        path: "{{ dir_nginx }}sites-enabled/default"
+        state: absent
+
+    - name: copy site config
+      template:        
+        src: ./tms.j2  # формат шаблона
+        dest: "{{ dir_nginx }}sites-available/{{ project_name }}"
+
+    - name: simlink
+      file:
+        src: "{{ dir_nginx }}sites-available/{{ project_name }}"
+        dest: "{{ dir_nginx }}sites-enabled/{{ project_name }}"
+        state: link
+
+    - name: Reload nginx
+      systemd:
+        name: nginx
+        state: reloaded

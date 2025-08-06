@@ -1,0 +1,37 @@
+---
+- hosts: targets
+  become: true
+  gather_facts: no
+  vars:
+    nginx_config_path: "/home/ansible/nginx.conf"
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+        update_cache: yes
+
+    - name: Ensure nginx is enabled
+      systemd:
+        name: nginx
+        state: restarted
+        enabled: true
+
+    - name: Copy myfile
+      copy:
+        src: ./myfile
+        dest: /home/ansible/myfile
+        owner: alrex
+        group: alrex
+        mode: '0644' 
+
+    - name: Copy config nginx
+      copy:
+        src: /etc/nginx/nginx.conf
+        dest: "{{ nginx_config_path }}"
+
+    - name: Change user in nginx.conf
+      lineinfile:
+        regexp: 'user'
+        path: "{{ nginx_config_path }}"
+        line: 'user alrex;'

@@ -1,0 +1,33 @@
+---
+- hosts: targets
+  become: true
+  gather_facts: no
+  vars:
+    dir: "/home/ansible"  
+  tasks:  
+    - name: Change line
+      lineinfile:
+        regexp: 'wiki.nginx.org'
+        path: /home/ansible/nginx.conf
+        line: '555555555555555555'
+
+    - name:  Remove default site nginx   
+      file:
+        path: /etc/nginx/sites-enabled/default 
+        state: absent 
+
+    - name: copy site config
+      copy:
+        src: ./tms
+        dest: /etc/nginx/sites-available/tms 
+
+    - name: simlink
+      file:
+        src: /etc/nginx/sites-available/tms
+        dest: /etc/nginx/sites-enabled/tms
+        state: link  
+    
+    - name: Reload nginx
+      systemd:    
+        name: nginx
+        state: reloaded      

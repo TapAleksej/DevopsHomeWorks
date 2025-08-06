@@ -1,0 +1,25 @@
+---
+- hosts: targets
+  become: true
+  tasks:
+    - name: Check disk space
+      shell: df -Th | grep -vE "tmpfs|//" | awk 'NR!=1{print $6}'    
+      register: discresult
+
+    - name: Print value  of command
+      debug:
+        msg: "{{ discresult }}"
+
+    - name: Alarm 
+      debug:
+        msg: "Warning! Low disk space: {{ discresult.stdout }}"
+      when: discresult.stdout | regex_search ('3[0-9%]')   
+
+    - name: Info OS from facts
+      debug:
+        msg: "OS: {{ ansible_distribution }} \n Version: {{ ansible_distribution_version }}"
+
+    - name: Info from  inventory vars
+      debug:
+        msg: "{{ inventory_hostname }}"
+       

@@ -1,0 +1,21 @@
+---
+- hosts: targets
+  become: true
+  gather_facts: yes
+
+  tasks:
+    - name: size of RAM
+      shell: free -h | grep Mem | awk '{ print $2}' | sed 's/Gi//' 
+      register: ram_size
+
+    - name: size HDD in /
+      shell: df -h | grep -vE "tmp|mnt|File" | awk '{ print $2 }' | sed 's/G//'
+      register: hhd_size
+
+    - name: print results
+      debug:
+        msg: "Size of ram: {{ ram_size.stdout }} Gb; \n  Size of hdd: {{ hhd_size.stdout }} Gb"     
+
+    - name: Version OS
+      debug:      
+        msg: "OS: {{ ansible_distribution }} \n Version: {{ ansible_distribution_version }}"      

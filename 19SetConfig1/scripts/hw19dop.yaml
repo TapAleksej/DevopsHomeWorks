@@ -1,0 +1,47 @@
+---
+- hosts: targets
+  become: true
+  gather_facts: no
+  vars:
+    user: "appuser" 
+
+  tasks:
+    - name: Add appuser
+      user:
+        name: appuser
+        shell: /bin/bash
+        state: present 
+
+    - name: Create dir .ssh if not exist
+      file:
+        path: "/home/{{ user }}/.ssh"
+        state: directory
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0700'
+
+    - name: Create authorized_key
+      file:
+        path: "/home/{{ user }}/.ssh/authorized_keys"       
+        state: touch  
+        owner: "{{ user }}"
+        group: "{{ user }}"
+        mode: '0600'
+  
+
+    - name: Set authorized key taken from file
+      authorized_key:
+        user: "{{ user }}"
+        state: present
+        key: "{{ lookup('file', '/home/{{ user }}/.ssh/id_ed25519.pub') }}"
+  
+
+    - name: copy template in /etc/motd
+      template:
+        src: "./templates/motd.j2"
+        dest: "/etc/motd"
+
+
+    - name: name host  from  inventory vars
+      debug:
+        msg: "{{ inventory_hostname }}"
