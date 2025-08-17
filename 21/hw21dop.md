@@ -176,7 +176,7 @@ main.yml
     src: atop.j2
     dest: /etc/default/atop
   notify:
-    - reload atop
+    - reload systemd
     - restart atop service
   tags: config_atop
 ```
@@ -213,9 +213,10 @@ atop.j2
 # see man atoprc for more possibilities to configure atop execution
 
 LOGOPTS=""
-LOGINTERVAL={{ atop_time }}
+LOGINTERVAL=600
 LOGGENERATIONS=28
 LOGPATH=/var/log/atop
+INTERVAL={{ atop_time }}
 ```
 
 
