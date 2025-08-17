@@ -136,7 +136,7 @@ https://github.com/TapAleksej/molekula
 https://github.com/TapAleksej/PythonRole/tree/main/roles/sys_utils_manager
 
 task
-
+main.yml
 ```
 ---
 # tasks file for roles/sys_utils_manager
@@ -144,30 +144,84 @@ task
   apt:
     update_cache: yes
 
-
-- name: install atop
+- name: install monitoring utils
   apt:
     name: "{{ item }}"
     state: present
   loop:
     - atop
-    - htop
+    - iotop
+  tags: monitoring
+
+
+- name: install networks utils
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop:
     - nmap
     - tcpdump
     - mtr
-    - strace
-  tags: inst_all
+  tags: network
 
 
-- name: install atop
+- name: install debug utils
   apt:
-    name: atop
-  tags: atop
+    name: strace
+    state: present
+  tags: debug
 
+- name: set interval metrics from atop
+  template:
+    src: atop.j2
+    dest: /etc/default/atop
+  notify:
+    - reload atop
+    - restart atop service
+  tags: config_atop
 ```
+
+handler
+main.yml
+```
+---
+# handlers file for roles/sys_utils_manager
+- name: reload systemd
+  systemd:
+    daemon-reload: yes
+
+
+- name: restart atop service
+  service:
+    name: atop
+    state: restarted
+```
+
+
+
+vars
+```
+---
+# vars file for roles/sys_utils_manager
+atop_time: 300 # 5 минут
+```
+
+templates
+atop.j2
+```
+# /etc/default/atop
+# see man atoprc for more possibilities to configure atop execution
+
+LOGOPTS=""
+LOGINTERVAL={{ atop_time }}
+LOGGENERATIONS=28
+LOGPATH=/var/log/atop
+```
+
+
 Зпуск
 ```
-ansible-playbook -i hosts run.yml --diff --skip-tags  inst_all
+ansible-playbook -i hosts run.yml --diff --tags config_atop
 ```
 
 
@@ -177,3 +231,15 @@ debug - для установки отладочных утилит
 config_atop - для настройки утилиты atop -> 
 изменение времени сбора метрик с 10 минут на значение, 
 указанное в переменной atop_time
+
+Установлен интервал
+```
+alrex@slv12:~$ sudo cat /etc/default/atop
+# /etc/default/atop
+# see man atoprc for more possibilities to configure atop execution
+
+LOGOPTS=""
+LOGINTERVAL=300
+LOGGENERATIONS=28
+LOGPATH=/var/log/atop
+```
