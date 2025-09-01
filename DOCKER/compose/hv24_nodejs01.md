@@ -28,6 +28,8 @@ curl http://localhost:3000
 
 # Реализация
 
+https://github.com/TapAleksej/Docker-compose/tree/main/nodejs_01
+
 .dockerignore
 ```
 nginx.conf
