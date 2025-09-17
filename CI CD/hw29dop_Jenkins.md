@@ -210,6 +210,8 @@ pipeline {
 						withCredentials([usernamePassword(credentialsId: 'docker-token', usernameVariable: 'username', passwordVariable: 'password')]) {
 								sshCommand remote: remote, command:  """																			
 									set -x;
+									docker ps | grep "${FULL_IMG_NAME}" | xargs docker rm -f 
+									echo "Container ${FULL_IMG_NAME} if exists deleted"
 									docker login -u ${username} -p ${password}
 									docker pull "${FULL_IMG_NAME}"
 									//cd "${env.PRJ_DIR}"
