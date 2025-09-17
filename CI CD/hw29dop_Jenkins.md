@@ -230,3 +230,7 @@ pipeline {
 На 10.129.0.19 запустил docker ps
 <img width="1134" height="99" alt="image" src="https://github.com/user-attachments/assets/bc963b9d-a0b0-4de9-b156-6e04f84d4b5f" />
 Докер контейнер развернут.
+
+Для случая с одним image - обновление
+<img width="1088" height="122" alt="image" src="https://github.com/user-attachments/assets/da308b87-34e3-4bba-b289-363032cd3f22" />
+
