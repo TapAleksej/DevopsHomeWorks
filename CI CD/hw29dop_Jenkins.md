@@ -34,7 +34,31 @@ sudo usermod -aG docker jenkins
 sudo systemctl restart jenkins
 ```
 
-```cs
+Проверка к удалённому серверу
+
+```sudo su - jenkins
+jenkins@jenkins:~$ ssh 10.129.0.19
+docker ps -a
+```
+Почистим остатки с других задач
+```
+docker ps -qa | xargs docker rm -f
+docker images -q | xargs docker rmi -f
+docker system prune -fa 
+
+exit
+```
+Сделал fork себе https://github.com/TapAleksej/simplest-todo/tree/main
+Добавил Jenkins_build и  Jenkinsfile-deploy
+
+Cоздал view hw48 на jenkins. 
+В нём 2 pipeline:
+	- simplest-build  - создаёт и пушит image на docker hub
+	- hw29-deploy 	- скачивает image на удалённом хосте из docker hub и запускает докер контейнер с приложением
+
+
+### Jenkins_build
+```js
 pipeline {	
 	agent any	
 	environment {
@@ -42,7 +66,8 @@ pipeline {
 		FULL_IMG_NAME="alrexcom/${env.PRJ_NAME}"
 		IMG_NAME="${env.PRJ_NAME}"
 		WORKSPACEPATH="${WORKSPACE}/${env.PRJ_NAME}"
-		GIT_URL="https://github.com/AnastasiyaGapochkina01/simplest-todo"
+		GIT_URL="git@github.com:TapAleksej/simplest-todo.git"
+
 	}
 	parameters {
 		booleanParam(name: 'RUN_TEST', defaultValue: true, description: 'Run test?' )
@@ -50,7 +75,8 @@ pipeline {
 		string(name: 'IMAGE_TAG', defaultValue: 'latest')	
 		booleanParam(name: 'PUSH_IMG', defaultValue: true, description: 'push image to docker hub?' )		
 	}
-	stages {			
+	stages {
+	
 		stage('initialize') {
 			steps {
 				echo "Start testing ToDo app; Build #${BUILD_NUMBER}"
@@ -135,15 +161,59 @@ pipeline {
 					}
 				}				
 		}
+		
+		stage('Call Deploy Job') {	
+		  steps {
+			script {
+			  build quietPeriod: 5, wait: false, job: 'hw29-deploy', parameters: [string(name: 'FULL_IMG_NAME', value: "${FULL_IMG_NAME}:${params.IMAGE_TAG}")]			  
+			}
+		  }
+		}		
+	}		
+}						
+```
+
+#### Jenkinsfile-deploy
+```js
+def remote = [:]
+
+pipeline {	
+	agent any	
+	environment {	
+		GIT_URL="git@github.com:TapAleksej/simplest-todo.git"
+		SERVER_HOST = "10.129.0.19"
+		SERVER_NAME = "deb12"
+	}
+	parameters {
+		string(name: 'FULL_IMG_NAME', description: 'Image to deploy')	
+	}
+	stages {
+			
+		stage('Prepare Credentials'){
+		  steps {
+			withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-key', keyFileVariable: 'private_key', usernameVariable: 'username')]) {
+			  script {
+				remote.name = "${env.SERVER_NAME}"
+				remote.host = "${env.SERVER_HOST}"
+				remote.user = "${username}"
+				remote.identity = readFile "${private_key}"
+				remote.allowAnyHosts = true
+			  }
+			}
+		  }
+		}			
+		
 		stage('deploy') {
 			steps {
 				script {
 					def deploy = { ->						
 						withCredentials([usernamePassword(credentialsId: 'docker-token', usernameVariable: 'username', passwordVariable: 'password')]) {
-								sh  """																			
+								sshCommand remote: remote, command:  """																			
+									set -x;
 									docker login -u ${username} -p ${password}
-									docker pull "${FULL_IMG_NAME}":${params.IMAGE_TAG}
-									docker run -it -d --name test  "${FULL_IMG_NAME}":${params.IMAGE_TAG}									
+									docker pull "${FULL_IMG_NAME}"
+									//cd "${env.PRJ_DIR}"
+									docker run -it -d --name test-"${BUILD_NUMBER}" "${FULL_IMG_NAME}"									
 								"""								
 						}	
 					}	
@@ -153,5 +223,5 @@ pipeline {
 		}	
 		
 	}		
-}		
+}						
 ```
