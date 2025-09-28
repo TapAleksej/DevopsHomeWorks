@@ -1,0 +1,59 @@
+services:
+  database:
+    image: postgres:17
+    container_name: bd
+    restart: always
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+      POSTGRES_DB: "${POSTGRES_DB}"
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  webui:
+    image: "${WEBUI_IMAGE}"
+    #build:
+    #  context: ./web-ui
+    container_name: web-ui
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      database:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  telegram:
+    image: "${BOT_IMAGE}"
+    #build:
+    #  context: ./bot
+    container_name: bot
+    env_file:
+      - ./.env
+    restart: always
+    depends_on:
+      webui:
+        condition: service_healthy
+
+  proxy:
+    image: nginx:alpine
+    container_name: proxy
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+    restart: always
+
+
+volumes:
+  pg_data:
